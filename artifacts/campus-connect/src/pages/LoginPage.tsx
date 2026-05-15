@@ -82,9 +82,6 @@ export default function LoginPage() {
               Don't have an account?{" "}
               <a href="/register" className="text-primary font-medium hover:underline">Register</a>
             </p>
-            <p className="text-center text-xs text-muted-foreground mt-3 p-2 rounded bg-muted">
-              Admin: admin@nhce.edu / NHCEAdmin@2026!
-            </p>
           </CardContent>
         </Card>
       </div>

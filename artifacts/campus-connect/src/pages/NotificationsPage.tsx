@@ -91,10 +91,8 @@ export default function NotificationsPage() {
                     </div>
                     <p className="text-sm text-muted-foreground mt-0.5">{n.message}</p>
                     {n.link && (
-                      <Link href={n.link}>
-                        <a className="inline-flex items-center gap-1 text-xs text-primary mt-1 hover:underline">
-                          <ExternalLink className="w-3 h-3" />View
-                        </a>
+                      <Link href={n.link} className="inline-flex items-center gap-1 text-xs text-primary mt-1 hover:underline">
+                        <ExternalLink className="w-3 h-3" />View
                       </Link>
                     )}
                   </div>

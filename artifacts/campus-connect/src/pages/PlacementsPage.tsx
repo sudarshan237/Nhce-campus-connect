@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Briefcase, Plus, Search, IndianRupee, Clock, Users, BookmarkPlus, Bookmark, ExternalLink } from "lucide-react";
+import { Briefcase, Plus, Search, IndianRupee, Clock, Users, BookmarkPlus, Bookmark, ExternalLink, Trash2 } from "lucide-react";
 import { format, parseISO } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 
@@ -89,6 +89,17 @@ export default function PlacementsPage() {
       toast({ variant: "destructive", title: "Error", description: err instanceof Error ? err.message : "Failed" });
     } finally {
       setCreating(false);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Delete this placement listing?")) return;
+    try {
+      await apiFetch(`/placements/${id}`, { method: "DELETE" });
+      setPlacements((prev) => prev.filter((p) => p.id !== id));
+      toast({ title: "Placement deleted" });
+    } catch (err: unknown) {
+      toast({ variant: "destructive", title: "Error", description: err instanceof Error ? err.message : "Failed" });
     }
   };
 
@@ -175,6 +186,11 @@ export default function PlacementsPage() {
                       <Button variant="ghost" size="icon" onClick={() => handleSave(p.id, p.isSaved ?? false)}>
                         {p.isSaved ? <Bookmark className="w-4 h-4 fill-current text-primary" /> : <BookmarkPlus className="w-4 h-4" />}
                       </Button>
+                      {user?.isAdmin && (
+                        <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive" onClick={() => handleDelete(p.id)}>
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      )}
                     </div>
                   </div>
                   {!isExpired(p.applyBy) && (

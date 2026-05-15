@@ -8,8 +8,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { GraduationCap, AlertCircle } from "lucide-react";
 
-const BRANCHES = ["CSE","AIML","DS","ECE","EEE","ME","Civil","ISE","MCA","MBA","BCA"];
-const COURSES = ["BTech","BE","MCA","MBA","BCA","MTech"];
+const BRANCHES = ["CSE","AIML","DS","ECE","EEE","ME","Civil","ISE"];
+const COURSES = ["BTech","BE","MCA","MBA","BCA","MTech","PhD"];
 
 export default function RegisterPage() {
   const { register } = useAuth();

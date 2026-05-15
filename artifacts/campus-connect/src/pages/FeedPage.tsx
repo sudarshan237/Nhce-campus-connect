@@ -31,9 +31,10 @@ interface Comment {
   content: string; createdAt: string;
 }
 
-function PostCard({ post, userId, isAdmin, onDelete, onLike, onPin }: {
+function PostCard({ post, userId, isAdmin, onDelete, onLike, onPin, onCommentCountChange }: {
   post: Post; userId: string; isAdmin: boolean;
   onDelete: (id: string) => void; onLike: (id: string) => void; onPin: (id: string, v: boolean) => void;
+  onCommentCountChange: (id: string, count: number) => void;
 }) {
   const [comments, setComments] = useState<Comment[]>([]);
   const [showComments, setShowComments] = useState(false);
@@ -44,6 +45,7 @@ function PostCard({ post, userId, isAdmin, onDelete, onLike, onPin }: {
   const loadComments = async () => {
     const data = await apiFetch<Comment[]>(`/posts/${post.id}/comments`);
     setComments(data);
+    onCommentCountChange(post.id, data.length);
   };
 
   const toggleComments = async () => {
@@ -311,6 +313,9 @@ export default function FeedPage() {
               onDelete={handleDelete}
               onLike={handleLike}
               onPin={handlePin}
+              onCommentCountChange={(id, count) =>
+                setPosts((prev) => prev.map((p) => p.id === id ? { ...p, commentCount: count } : p))
+              }
             />
           ))}
         </div>

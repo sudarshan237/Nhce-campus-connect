@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Calendar, MapPin, Users, Plus, Search, Clock, CheckCircle2 } from "lucide-react";
+import { Calendar, MapPin, Users, Plus, Search, Clock, CheckCircle2, Trash2 } from "lucide-react";
 import { format, parseISO } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 
@@ -88,6 +88,17 @@ export default function EventsPage() {
     }
   };
 
+  const handleDelete = async (id: string) => {
+    if (!confirm("Delete this event?")) return;
+    try {
+      await apiFetch(`/events/${id}`, { method: "DELETE" });
+      setEvents((prev) => prev.filter((e) => e.id !== id));
+      toast({ title: "Event deleted" });
+    } catch (err: unknown) {
+      toast({ variant: "destructive", title: "Error", description: err instanceof Error ? err.message : "Failed" });
+    }
+  };
+
   const upcoming = events.filter((e) => new Date(e.date) >= new Date());
   const past = events.filter((e) => new Date(e.date) < new Date());
 
@@ -111,6 +122,11 @@ export default function EventsPage() {
                 <span className="flex items-center gap-1"><Users className="w-3.5 h-3.5" />{event.registrationCount}{event.maxAttendees ? `/${event.maxAttendees}` : ""} registered</span>
               </div>
             </div>
+            {user?.isAdmin && (
+              <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive flex-shrink-0" onClick={() => handleDelete(event.id)}>
+                <Trash2 className="w-4 h-4" />
+              </Button>
+            )}
           </div>
           {!isPast && (
             <div className="flex items-center justify-between mt-4 pt-4 border-t border-border">

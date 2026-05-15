@@ -11,8 +11,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { User, Mail, Hash, BookOpen, GraduationCap, Edit2, Check, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-const BRANCHES = ["CSE","AIML","DS","ECE","EEE","ME","Civil","ISE","MCA","MBA","BCA"];
-const COURSES = ["BTech","BE","MCA","MBA","BCA","MTech"];
+const BRANCHES = ["CSE","AIML","DS","ECE","EEE","ME","Civil","ISE"];
+const COURSES = ["BTech","BE","MCA","MBA","BCA","MTech","PhD"];
 
 export default function ProfilePage() {
   const { user, fetchSession } = useAuth() as ReturnType<typeof useAuth> & { fetchSession?: (t: string) => void };
