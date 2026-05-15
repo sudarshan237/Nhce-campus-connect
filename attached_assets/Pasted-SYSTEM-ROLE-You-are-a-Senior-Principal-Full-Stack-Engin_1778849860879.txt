@@ -1,0 +1,118 @@
+SYSTEM ROLE:
+You are a Senior Principal Full-Stack Engineer, UI/UX Designer, and DevOps Engineer. You write complete, production-ready, deployable code. You never leave placeholders, broken buttons, fake UI, or TODO comments. Every feature you build works end-to-end.
+PROJECT: NHCE Campus Connect
+(New Horizon College of Engineering — Internal College Platform)
+Build a complete, real, deployable full-stack web app. This is not a mockup. Every button works. Every form submits. Every CRUD operation hits the database. This must be stable enough to handle 5,000+ concurrent student users and presentable to college officials.
+HARD RULES — NON-NEGOTIABLE:
+Zero placeholders, zero "coming soon", zero dead routes
+Zero hardcoded credentials in UI — admin setup via SQL seed + .env only
+Zero mentions of AI, Claude, GPT, or any assistant in UI or code comments
+Fatal errors must show: "Please contact: patil.sudu237@gmail.com"
+Dark mode AND light mode must both work perfectly
+Every form must validate properly — required fields marked, date inputs editable
+Event create/edit form: date field must remain dynamically editable, validation must pass correctly
+Admin event creation must work without "fill required fields" false errors
+TECH STACK:
+React 18 + Vite + Tailwind CSS + React Router v6
+Supabase (Auth + PostgreSQL + Storage + Realtime)
+React Query (caching, pagination)
+Framer Motion (animations)
+Lucide React (icons)
+Recharts (analytics charts)
+qrcode.react (QR generation)
+Web Speech API (voice input)
+React Hot Toast (notifications)
+Vercel-ready deployment
+FOLDER STRUCTURE:
+Code
+AUTH SYSTEM:
+Separate Student Login/Register + Admin Login pages
+Never show admin credentials anywhere in the UI
+Admin account created only via Supabase SQL seed + .env
+Students self-register with: name, USN, branch, year, course, role, email, password
+Role-Based Access Control (RBAC) with protected routes
+Supabase Auth + session persistence
+Roles: Student, Admin, Event Organizer, Placement Coordinator, Teacher, Non-teaching Staff, Other
+Courses: BTech (4yr), MCA/MBA (2yr), BCA (3yr)
+Branches: CSE, AIML, DS, ECE, EEE, ME, MCA, MBA, BCA, Others
+PAGES (all fully working):
+Home, Student Login, Student Register, Admin Login, Student Dashboard, Admin Dashboard, Feed, Complaints, Complaint Detail, Events, Attendance, Feedback, Placement Hub, Notifications, Profile, About, Contact, Lost and Found
+MODULES:
+Student Dashboard: profile, announcements, stats, notifications, recent posts, recent complaints, event registrations
+Admin Dashboard: total students, complaints, events, placements, analytics charts, manage users/posts/complaints/placements/events/feedback, delete/edit anything
+College Feed:
+Text + image posts, categories, likes, comments, upvotes, reports, anonymous posting, admin pin/delete
+Categories: General, Complaints, Suggestions, Events, Placement, Study Help, Lost and Found
+Students can only edit/delete their own posts within 5 minutes:
+Js
+Search System: Debounced + realtime filtering across posts, complaints, events, placements, feedback. Category + date filters. Indexed DB queries.
+Complaint System:
+Categories: Electrical, Water, WiFi, Cleanliness, Security, Harassment, Other
+Statuses: Pending → In Progress → Resolved
+Complaint detail page, tracking history, status updates
+Notification click navigates to: navigate('/complaints/${id}')
+Voice input via Web Speech API (mic button → autofills textarea, editable before submit)
+QR code generation per complaint (links to exact complaint page)
+Event System:
+Full CRUD, register/deregister (single dynamic button), QR attendance, event reminders, realtime registration count
+Register button shows "Deregister" if already registered, "Register" if not
+Feedback System: For Teachers, Events, Canteen, Facilities, Placements. Anonymous option, star rating, comments, admin summary view, filters.
+Placement Hub:
+Admin creates placement posts (company drives, eligibility, dates)
+Apply button stores: studentId, placementId, timestamp → placement_applications table
+Save posts feature
+No scraping — seeded data + admin-created posts only
+Notifications: Realtime (Supabase subscriptions), read/unread, deep-link to exact related page
+Analytics: Recharts dashboards — students, complaints (breakdown), resolved rate, event registrations, posts, feedback, placement applications
+Lost and Found: Lost/found posts, optional image upload, contact masking, admin moderation
+Chatbot: Lightweight rules-based only. Complaint guidance, FAQ, category suggestions. No external APIs.
+DATABASE TABLES:
+users, posts, comments, likes, complaints, complaint_updates, feedback, events, event_registrations, attendance, placements, placement_applications, notifications, reports, lost_found, settings
+Requirements: PostgreSQL, foreign keys, indexes on frequently queried columns, timestamps, enums for roles/statuses, RLS policies, Realtime subscriptions enabled.
+RLS:
+Students: edit own profile, access own complaints only
+Authenticated users: view public posts/events/placements
+Organizers: manage own events only
+Placement coordinators: manage placements
+Admin: full unrestricted access
+PERFORMANCE:
+React Query for all data fetching + caching
+Pagination or infinite scroll on all list views
+Debounced search (300ms)
+Lazy-loaded routes
+Memoized expensive components
+Efficient Supabase Realtime subscriptions (no over-subscribing)
+SECURITY:
+All secrets in .env only
+Input sanitization on all forms
+Admin routes protected by role check
+No exposed credentials anywhere in frontend
+SEED DATA:
+Create via supabase/seed.sql:
+1 admin account (credentials in .env only, never in UI)
+10 sample students
+Sample complaints, events, placements, posts, comments, feedback, notifications, lost/found items
+UI/UX:
+Design language: Apple meets Stripe — clean, modern, premium
+Mobile-first responsive layout
+Sidebar navigation
+Glassmorphism cards where appropriate
+Smooth Framer Motion transitions
+Toast notifications (React Hot Toast)
+Loading skeletons, empty states, error states on every page
+Dark mode + light mode toggle — both fully functional
+OUTPUT ORDER:
+Final Architecture overview
+Complete file/folder structure
+Database schema summary
+supabase/migrations/schema.sql (complete)
+supabase/seed.sql (complete)
+RLS policies
+package.json
+.env.example
+All source files, in order: App.jsx → routing → providers → layouts → pages → components → hooks → services
+Supabase project setup guide
+Vercel deployment guide
+Testing checklist
+Production readiness checklist
+Start with the architecture and file structure, then generate every file completely. Do not summarize or truncate any file. Every file must be complete and immediately usable.

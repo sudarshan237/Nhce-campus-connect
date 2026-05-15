@@ -3,20 +3,40 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: NHCE Campus Connect API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: users
+    description: User management
+  - name: posts
+    description: College feed posts
+  - name: comments
+    description: Post comments
+  - name: complaints
+    description: Complaint management
+  - name: events
+    description: Event management
+  - name: placements
+    description: Placement hub
+  - name: notifications
+    description: Notifications
+  - name: feedback
+    description: Feedback
+  - name: lostfound
+    description: Lost and found
+  - name: stats
+    description: Dashboard statistics
+
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,13 +44,1300 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  # ── USERS ─────────────────────────────────────────────────────────────────
+  /users/me:
+    get:
+      operationId: getMe
+      tags: [users]
+      summary: Get current user profile
+      responses:
+        "200":
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "404":
+          description: Not found
+    patch:
+      operationId: updateMe
+      tags: [users]
+      summary: Update current user profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserUpdate"
+      responses:
+        "200":
+          description: Updated user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+  /users/me/sync:
+    post:
+      operationId: syncUser
+      tags: [users]
+      summary: Sync Clerk user into DB (creates or updates)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserSync"
+      responses:
+        "200":
+          description: Synced user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+  /users:
+    get:
+      operationId: listUsers
+      tags: [users]
+      summary: List all users (admin only)
+      parameters:
+        - in: query
+          name: search
+          schema:
+            type: string
+        - in: query
+          name: role
+          schema:
+            type: string
+        - in: query
+          name: page
+          schema:
+            type: integer
+        - in: query
+          name: limit
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Users list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserListResponse"
+
+  /users/{id}:
+    get:
+      operationId: getUser
+      tags: [users]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: User
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+    delete:
+      operationId: deleteUser
+      tags: [users]
+      summary: Delete user (admin only)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Deleted
+
+  # ── POSTS ─────────────────────────────────────────────────────────────────
+  /posts:
+    get:
+      operationId: listPosts
+      tags: [posts]
+      summary: List feed posts
+      parameters:
+        - in: query
+          name: category
+          schema:
+            type: string
+        - in: query
+          name: search
+          schema:
+            type: string
+        - in: query
+          name: page
+          schema:
+            type: integer
+        - in: query
+          name: limit
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Posts list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PostListResponse"
+    post:
+      operationId: createPost
+      tags: [posts]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PostInput"
+      responses:
+        "201":
+          description: Created post
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Post"
+
+  /posts/{id}:
+    get:
+      operationId: getPost
+      tags: [posts]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Post
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Post"
+    patch:
+      operationId: updatePost
+      tags: [posts]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PostUpdate"
+      responses:
+        "200":
+          description: Updated post
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Post"
+    delete:
+      operationId: deletePost
+      tags: [posts]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Deleted
+
+  /posts/{id}/like:
+    post:
+      operationId: togglePostLike
+      tags: [posts]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Like toggled
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LikeResult"
+
+  /posts/{id}/pin:
+    patch:
+      operationId: pinPost
+      tags: [posts]
+      summary: Pin/unpin post (admin only)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PinToggle"
+      responses:
+        "200":
+          description: Updated post
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Post"
+
+  # ── COMMENTS ──────────────────────────────────────────────────────────────
+  /posts/{postId}/comments:
+    get:
+      operationId: listComments
+      tags: [comments]
+      parameters:
+        - in: path
+          name: postId
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Comments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Comment"
+    post:
+      operationId: createComment
+      tags: [comments]
+      parameters:
+        - in: path
+          name: postId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CommentInput"
+      responses:
+        "201":
+          description: Created comment
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Comment"
+
+  /comments/{id}:
+    delete:
+      operationId: deleteComment
+      tags: [comments]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Deleted
+
+  # ── COMPLAINTS ────────────────────────────────────────────────────────────
+  /complaints:
+    get:
+      operationId: listComplaints
+      tags: [complaints]
+      parameters:
+        - in: query
+          name: status
+          schema:
+            type: string
+        - in: query
+          name: category
+          schema:
+            type: string
+        - in: query
+          name: mine
+          schema:
+            type: boolean
+        - in: query
+          name: page
+          schema:
+            type: integer
+        - in: query
+          name: limit
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Complaints list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ComplaintListResponse"
+    post:
+      operationId: createComplaint
+      tags: [complaints]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ComplaintInput"
+      responses:
+        "201":
+          description: Created complaint
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Complaint"
+
+  /complaints/{id}:
+    get:
+      operationId: getComplaint
+      tags: [complaints]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Complaint detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ComplaintDetail"
+    patch:
+      operationId: updateComplaintStatus
+      tags: [complaints]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ComplaintStatusUpdate"
+      responses:
+        "200":
+          description: Updated complaint
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Complaint"
+    delete:
+      operationId: deleteComplaint
+      tags: [complaints]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Deleted
+
+  # ── EVENTS ────────────────────────────────────────────────────────────────
+  /events:
+    get:
+      operationId: listEvents
+      tags: [events]
+      parameters:
+        - in: query
+          name: search
+          schema:
+            type: string
+        - in: query
+          name: upcoming
+          schema:
+            type: boolean
+        - in: query
+          name: page
+          schema:
+            type: integer
+        - in: query
+          name: limit
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Events list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EventListResponse"
+    post:
+      operationId: createEvent
+      tags: [events]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EventInput"
+      responses:
+        "201":
+          description: Created event
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Event"
+
+  /events/{id}:
+    get:
+      operationId: getEvent
+      tags: [events]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Event detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Event"
+    patch:
+      operationId: updateEvent
+      tags: [events]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EventUpdate"
+      responses:
+        "200":
+          description: Updated event
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Event"
+    delete:
+      operationId: deleteEvent
+      tags: [events]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Deleted
+
+  /events/{id}/register:
+    post:
+      operationId: toggleEventRegistration
+      tags: [events]
+      summary: Register or deregister for an event
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Registration toggled
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RegistrationResult"
+
+  # ── PLACEMENTS ────────────────────────────────────────────────────────────
+  /placements:
+    get:
+      operationId: listPlacements
+      tags: [placements]
+      parameters:
+        - in: query
+          name: search
+          schema:
+            type: string
+        - in: query
+          name: page
+          schema:
+            type: integer
+        - in: query
+          name: limit
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Placements list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PlacementListResponse"
+    post:
+      operationId: createPlacement
+      tags: [placements]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PlacementInput"
+      responses:
+        "201":
+          description: Created placement
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Placement"
+
+  /placements/{id}:
+    get:
+      operationId: getPlacement
+      tags: [placements]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Placement detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Placement"
+    patch:
+      operationId: updatePlacement
+      tags: [placements]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PlacementUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Placement"
+    delete:
+      operationId: deletePlacement
+      tags: [placements]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Deleted
+
+  /placements/{id}/apply:
+    post:
+      operationId: applyPlacement
+      tags: [placements]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Applied
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApplicationResult"
+
+  /placements/{id}/save:
+    post:
+      operationId: savePlacement
+      tags: [placements]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Saved/unsaved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SaveResult"
+
+  # ── FEEDBACK ──────────────────────────────────────────────────────────────
+  /feedback:
+    get:
+      operationId: listFeedback
+      tags: [feedback]
+      parameters:
+        - in: query
+          name: type
+          schema:
+            type: string
+        - in: query
+          name: page
+          schema:
+            type: integer
+        - in: query
+          name: limit
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Feedback list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FeedbackListResponse"
+    post:
+      operationId: createFeedback
+      tags: [feedback]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FeedbackInput"
+      responses:
+        "201":
+          description: Created feedback
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Feedback"
+
+  # ── NOTIFICATIONS ─────────────────────────────────────────────────────────
+  /notifications:
+    get:
+      operationId: listNotifications
+      tags: [notifications]
+      parameters:
+        - in: query
+          name: unreadOnly
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: Notifications list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Notification"
+
+  /notifications/read-all:
+    post:
+      operationId: markAllNotificationsRead
+      tags: [notifications]
+      responses:
+        "204":
+          description: All marked read
+
+  /notifications/{id}/read:
+    patch:
+      operationId: markNotificationRead
+      tags: [notifications]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Updated notification
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Notification"
+
+  # ── LOST & FOUND ──────────────────────────────────────────────────────────
+  /lost-found:
+    get:
+      operationId: listLostFound
+      tags: [lostfound]
+      parameters:
+        - in: query
+          name: type
+          schema:
+            type: string
+        - in: query
+          name: search
+          schema:
+            type: string
+        - in: query
+          name: page
+          schema:
+            type: integer
+        - in: query
+          name: limit
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Lost & found list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LostFoundListResponse"
+    post:
+      operationId: createLostFound
+      tags: [lostfound]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LostFoundInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LostFound"
+
+  /lost-found/{id}:
+    patch:
+      operationId: updateLostFound
+      tags: [lostfound]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LostFoundUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LostFound"
+    delete:
+      operationId: deleteLostFound
+      tags: [lostfound]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Deleted
+
+  # ── STATS (wow endpoints) ─────────────────────────────────────────────────
+  /stats/admin:
+    get:
+      operationId: getAdminStats
+      tags: [stats]
+      summary: Admin dashboard aggregated stats
+      responses:
+        "200":
+          description: Admin stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminStats"
+
+  /stats/student:
+    get:
+      operationId: getStudentStats
+      tags: [stats]
+      summary: Student dashboard aggregated stats
+      responses:
+        "200":
+          description: Student stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StudentStats"
+
 components:
   schemas:
     HealthStatus:
       type: object
+      required: [status]
       properties:
         status:
           type: string
-      required:
-        - status
 
+    # ── USER ────────────────────────────────────────────────────────────────
+    User:
+      type: object
+      required: [id, clerkId, name, email, role, createdAt]
+      properties:
+        id:          { type: string }
+        clerkId:     { type: string }
+        name:        { type: string }
+        email:       { type: string }
+        role:        { type: string }
+        usn:         { type: ["string", "null"] }
+        branch:      { type: ["string", "null"] }
+        year:        { type: ["integer", "null"] }
+        course:      { type: ["string", "null"] }
+        avatarUrl:   { type: ["string", "null"] }
+        isAdmin:     { type: boolean }
+        createdAt:   { type: string }
+
+    UserSync:
+      type: object
+      required: [clerkId, name, email]
+      properties:
+        clerkId:   { type: string }
+        name:      { type: string }
+        email:     { type: string }
+        avatarUrl: { type: ["string", "null"] }
+
+    UserUpdate:
+      type: object
+      properties:
+        name:    { type: string }
+        usn:     { type: string }
+        branch:  { type: string }
+        year:    { type: integer }
+        course:  { type: string }
+        role:    { type: string }
+
+    UserListResponse:
+      type: object
+      required: [users, total]
+      properties:
+        users: { type: array, items: { $ref: "#/components/schemas/User" } }
+        total: { type: integer }
+
+    # ── POST ────────────────────────────────────────────────────────────────
+    Post:
+      type: object
+      required: [id, authorId, content, category, likeCount, commentCount, isPinned, isAnonymous, createdAt]
+      properties:
+        id:           { type: string }
+        authorId:     { type: string }
+        authorName:   { type: ["string", "null"] }
+        authorAvatar: { type: ["string", "null"] }
+        content:      { type: string }
+        imageUrl:     { type: ["string", "null"] }
+        category:     { type: string }
+        likeCount:    { type: integer }
+        commentCount: { type: integer }
+        isPinned:     { type: boolean }
+        isAnonymous:  { type: boolean }
+        isLiked:      { type: boolean }
+        createdAt:    { type: string }
+
+    PostInput:
+      type: object
+      required: [content, category]
+      properties:
+        content:     { type: string, minLength: 1 }
+        imageUrl:    { type: string }
+        category:    { type: string }
+        isAnonymous: { type: boolean }
+
+    PostUpdate:
+      type: object
+      properties:
+        content:  { type: string }
+        imageUrl: { type: string }
+
+    PostListResponse:
+      type: object
+      required: [posts, total]
+      properties:
+        posts: { type: array, items: { $ref: "#/components/schemas/Post" } }
+        total: { type: integer }
+
+    LikeResult:
+      type: object
+      required: [liked, likeCount]
+      properties:
+        liked:     { type: boolean }
+        likeCount: { type: integer }
+
+    PinToggle:
+      type: object
+      required: [isPinned]
+      properties:
+        isPinned: { type: boolean }
+
+    # ── COMMENT ─────────────────────────────────────────────────────────────
+    Comment:
+      type: object
+      required: [id, postId, authorId, content, createdAt]
+      properties:
+        id:           { type: string }
+        postId:       { type: string }
+        authorId:     { type: string }
+        authorName:   { type: ["string", "null"] }
+        authorAvatar: { type: ["string", "null"] }
+        content:      { type: string }
+        createdAt:    { type: string }
+
+    CommentInput:
+      type: object
+      required: [content]
+      properties:
+        content: { type: string, minLength: 1 }
+
+    # ── COMPLAINT ───────────────────────────────────────────────────────────
+    Complaint:
+      type: object
+      required: [id, authorId, title, description, category, status, createdAt]
+      properties:
+        id:          { type: string }
+        authorId:    { type: string }
+        authorName:  { type: ["string", "null"] }
+        title:       { type: string }
+        description: { type: string }
+        category:    { type: string }
+        status:      { type: string }
+        createdAt:   { type: string }
+        updatedAt:   { type: string }
+
+    ComplaintDetail:
+      type: object
+      required: [id, authorId, title, description, category, status, updates, createdAt]
+      properties:
+        id:          { type: string }
+        authorId:    { type: string }
+        authorName:  { type: ["string", "null"] }
+        title:       { type: string }
+        description: { type: string }
+        category:    { type: string }
+        status:      { type: string }
+        updates:
+          type: array
+          items:
+            $ref: "#/components/schemas/ComplaintUpdate"
+        createdAt:   { type: string }
+        updatedAt:   { type: string }
+
+    ComplaintUpdate:
+      type: object
+      required: [id, status, createdAt]
+      properties:
+        id:        { type: string }
+        status:    { type: string }
+        note:      { type: ["string", "null"] }
+        createdAt: { type: string }
+
+    ComplaintInput:
+      type: object
+      required: [title, description, category]
+      properties:
+        title:       { type: string, minLength: 1 }
+        description: { type: string, minLength: 1 }
+        category:    { type: string }
+
+    ComplaintStatusUpdate:
+      type: object
+      required: [status]
+      properties:
+        status: { type: string }
+        note:   { type: string }
+
+    ComplaintListResponse:
+      type: object
+      required: [complaints, total]
+      properties:
+        complaints: { type: array, items: { $ref: "#/components/schemas/Complaint" } }
+        total:      { type: integer }
+
+    # ── EVENT ───────────────────────────────────────────────────────────────
+    Event:
+      type: object
+      required: [id, title, description, date, venue, organizerId, registrationCount, isRegistered, createdAt]
+      properties:
+        id:                { type: string }
+        title:             { type: string }
+        description:       { type: string }
+        date:              { type: string }
+        venue:             { type: string }
+        organizerId:       { type: string }
+        organizerName:     { type: ["string", "null"] }
+        imageUrl:          { type: ["string", "null"] }
+        registrationCount: { type: integer }
+        maxAttendees:      { type: ["integer", "null"] }
+        isRegistered:      { type: boolean }
+        createdAt:         { type: string }
+
+    EventInput:
+      type: object
+      required: [title, description, date, venue]
+      properties:
+        title:        { type: string, minLength: 1 }
+        description:  { type: string }
+        date:         { type: string }
+        venue:        { type: string }
+        imageUrl:     { type: string }
+        maxAttendees: { type: integer }
+
+    EventUpdate:
+      type: object
+      properties:
+        title:        { type: string }
+        description:  { type: string }
+        date:         { type: string }
+        venue:        { type: string }
+        imageUrl:     { type: string }
+        maxAttendees: { type: integer }
+
+    EventListResponse:
+      type: object
+      required: [events, total]
+      properties:
+        events: { type: array, items: { $ref: "#/components/schemas/Event" } }
+        total:  { type: integer }
+
+    RegistrationResult:
+      type: object
+      required: [registered, registrationCount]
+      properties:
+        registered:        { type: boolean }
+        registrationCount: { type: integer }
+
+    # ── PLACEMENT ───────────────────────────────────────────────────────────
+    Placement:
+      type: object
+      required: [id, company, role, description, eligibility, applyBy, createdAt]
+      properties:
+        id:           { type: string }
+        company:      { type: string }
+        role:         { type: string }
+        description:  { type: string }
+        eligibility:  { type: string }
+        packageLpa:   { type: ["number", "null"] }
+        applyBy:      { type: string }
+        applyLink:    { type: ["string", "null"] }
+        isApplied:    { type: boolean }
+        isSaved:      { type: boolean }
+        applicantCount: { type: integer }
+        createdAt:    { type: string }
+
+    PlacementInput:
+      type: object
+      required: [company, role, description, eligibility, applyBy]
+      properties:
+        company:     { type: string, minLength: 1 }
+        role:        { type: string, minLength: 1 }
+        description: { type: string }
+        eligibility: { type: string }
+        packageLpa:  { type: number }
+        applyBy:     { type: string }
+        applyLink:   { type: string }
+
+    PlacementUpdate:
+      type: object
+      properties:
+        company:     { type: string }
+        role:        { type: string }
+        description: { type: string }
+        eligibility: { type: string }
+        packageLpa:  { type: number }
+        applyBy:     { type: string }
+        applyLink:   { type: string }
+
+    PlacementListResponse:
+      type: object
+      required: [placements, total]
+      properties:
+        placements: { type: array, items: { $ref: "#/components/schemas/Placement" } }
+        total:      { type: integer }
+
+    ApplicationResult:
+      type: object
+      required: [applied, applicantCount]
+      properties:
+        applied:        { type: boolean }
+        applicantCount: { type: integer }
+
+    SaveResult:
+      type: object
+      required: [saved]
+      properties:
+        saved: { type: boolean }
+
+    # ── FEEDBACK ────────────────────────────────────────────────────────────
+    Feedback:
+      type: object
+      required: [id, type, rating, createdAt]
+      properties:
+        id:          { type: string }
+        authorId:    { type: ["string", "null"] }
+        type:        { type: string }
+        targetName:  { type: ["string", "null"] }
+        rating:      { type: integer }
+        comment:     { type: ["string", "null"] }
+        isAnonymous: { type: boolean }
+        createdAt:   { type: string }
+
+    FeedbackInput:
+      type: object
+      required: [type, rating]
+      properties:
+        type:        { type: string }
+        targetName:  { type: string }
+        rating:      { type: integer, minimum: 1, maximum: 5 }
+        comment:     { type: string }
+        isAnonymous: { type: boolean }
+
+    FeedbackListResponse:
+      type: object
+      required: [feedback, total]
+      properties:
+        feedback: { type: array, items: { $ref: "#/components/schemas/Feedback" } }
+        total:    { type: integer }
+
+    # ── NOTIFICATION ────────────────────────────────────────────────────────
+    Notification:
+      type: object
+      required: [id, userId, title, message, isRead, createdAt]
+      properties:
+        id:        { type: string }
+        userId:    { type: string }
+        title:     { type: string }
+        message:   { type: string }
+        link:      { type: ["string", "null"] }
+        isRead:    { type: boolean }
+        createdAt: { type: string }
+
+    # ── LOST & FOUND ────────────────────────────────────────────────────────
+    LostFound:
+      type: object
+      required: [id, authorId, type, title, description, location, isResolved, createdAt]
+      properties:
+        id:          { type: string }
+        authorId:    { type: string }
+        authorName:  { type: ["string", "null"] }
+        type:        { type: string }
+        title:       { type: string }
+        description: { type: string }
+        location:    { type: string }
+        imageUrl:    { type: ["string", "null"] }
+        contact:     { type: ["string", "null"] }
+        isResolved:  { type: boolean }
+        createdAt:   { type: string }
+
+    LostFoundInput:
+      type: object
+      required: [type, title, description, location]
+      properties:
+        type:        { type: string }
+        title:       { type: string, minLength: 1 }
+        description: { type: string }
+        location:    { type: string }
+        imageUrl:    { type: string }
+        contact:     { type: string }
+
+    LostFoundUpdate:
+      type: object
+      properties:
+        isResolved: { type: boolean }
+        contact:    { type: string }
+
+    LostFoundListResponse:
+      type: object
+      required: [items, total]
+      properties:
+        items: { type: array, items: { $ref: "#/components/schemas/LostFound" } }
+        total: { type: integer }
+
+    # ── STATS ───────────────────────────────────────────────────────────────
+    AdminStats:
+      type: object
+      required: [totalStudents, totalComplaints, pendingComplaints, resolvedComplaints, totalEvents, totalPlacements, totalPosts, recentActivity]
+      properties:
+        totalStudents:      { type: integer }
+        totalComplaints:    { type: integer }
+        pendingComplaints:  { type: integer }
+        resolvedComplaints: { type: integer }
+        totalEvents:        { type: integer }
+        totalPlacements:    { type: integer }
+        totalPosts:         { type: integer }
+        complaintsByCategory:
+          type: array
+          items:
+            $ref: "#/components/schemas/CategoryCount"
+        recentActivity:
+          type: array
+          items:
+            $ref: "#/components/schemas/ActivityItem"
+
+    StudentStats:
+      type: object
+      required: [myComplaints, myEventRegistrations, upcomingEvents, unreadNotifications]
+      properties:
+        myComplaints:           { type: integer }
+        myEventRegistrations:   { type: integer }
+        upcomingEvents:         { type: integer }
+        unreadNotifications:    { type: integer }
+        recentPlacements:
+          type: array
+          items:
+            $ref: "#/components/schemas/Placement"
+
+    CategoryCount:
+      type: object
+      required: [category, count]
+      properties:
+        category: { type: string }
+        count:    { type: integer }
+
+    ActivityItem:
+      type: object
+      required: [type, message, createdAt]
+      properties:
+        type:      { type: string }
+        message:   { type: string }
+        link:      { type: ["string", "null"] }
+        createdAt: { type: string }
