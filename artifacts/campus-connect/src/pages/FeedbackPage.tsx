@@ -15,7 +15,7 @@ import { Star, Plus, MessageSquare } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 
-const TYPES = ["Teacher","Department","Canteen","Hostel","Library","Transport","Sports","Facilities","Other"];
+const TYPES = ["Teacher","Department","Canteen","Hostel","Library","Transport","Sports","Facilities","Placement Cell","Technical Support","Event","Other"];
 
 interface Feedback {
   id: string; authorId: string; authorName: string | null; type: string;

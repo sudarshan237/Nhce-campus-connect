@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { GraduationCap, AlertCircle } from "lucide-react";
+import { GraduationCap, AlertCircle, Eye, EyeOff } from "lucide-react";
 
 const BRANCHES = ["CSE","AIML","DS","ECE","EEE","ME","Civil","ISE"];
 const COURSES = ["BTech","BE","MCA","MBA","BCA","MTech","PhD"];
@@ -17,6 +17,7 @@ export default function RegisterPage() {
   const [form, setForm] = useState({ name:"", email:"", password:"", usn:"", branch:"", year:"", course:"", role:"Student" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const set = (k: string, v: string) => setForm((f) => ({ ...f, [k]: v }));
 
@@ -68,7 +69,12 @@ export default function RegisterPage() {
                 </div>
                 <div className="col-span-2 space-y-1">
                   <Label>Password *</Label>
-                  <Input type="password" placeholder="Min 8 characters" value={form.password} onChange={(e) => set("password", e.target.value)} required />
+                  <div className="relative">
+                    <Input type={showPassword ? "text" : "password"} placeholder="Min 8 characters" value={form.password} onChange={(e) => set("password", e.target.value)} className="pr-10" required />
+                    <button type="button" onClick={() => setShowPassword((v) => !v)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors" tabIndex={-1}>
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
                 </div>
                 <div className="space-y-1">
                   <Label>USN</Label>

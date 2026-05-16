@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { apiFetch } from "@/lib/api";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -9,13 +9,18 @@ import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { AlertCircle, Plus, Clock, CheckCircle2, Loader2, ChevronDown } from "lucide-react";
+import { AlertCircle, Plus, Clock, CheckCircle2, Loader2, ChevronDown, ShieldAlert } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 
-const CATEGORIES = ["WiFi","Electrical","Water","Sanitation","Canteen","Transport","Library","Sports","Hostel","Other"];
+const CATEGORIES = [
+  "WiFi","Electrical","Water","Sanitation","Canteen","Transport",
+  "Library","Sports","Hostel","Classroom","Lab Equipment","Parking","Security","Other"
+];
+const PRIORITIES = ["Low","Medium","High"];
 const STATUSES = ["Pending","In Progress","Resolved"];
 
 interface ComplaintUpdate {
@@ -23,13 +28,20 @@ interface ComplaintUpdate {
 }
 interface Complaint {
   id: string; authorId: string; authorName: string | null; title: string;
-  description: string; category: string; status: string; createdAt: string; updates?: ComplaintUpdate[];
+  description: string; category: string; priority: string; isAnonymous: boolean;
+  status: string; createdAt: string; updates?: ComplaintUpdate[];
 }
 
 function statusColor(s: string) {
   if (s === "Resolved") return "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400";
   if (s === "In Progress") return "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400";
   return "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400";
+}
+
+function priorityColor(p: string) {
+  if (p === "High") return "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400";
+  if (p === "Medium") return "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400";
+  return "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400";
 }
 
 function statusIcon(s: string) {
@@ -44,7 +56,7 @@ export default function ComplaintsPage() {
   const [complaints, setComplaints] = useState<Complaint[]>([]);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState("all");
-  const [form, setForm] = useState({ title: "", description: "", category: "WiFi" });
+  const [form, setForm] = useState({ title: "", description: "", category: "WiFi", priority: "Medium", isAnonymous: false });
   const [creating, setCreating] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [expanded, setExpanded] = useState<string | null>(null);
@@ -73,7 +85,7 @@ export default function ComplaintsPage() {
     try {
       await apiFetch("/complaints", { method: "POST", body: JSON.stringify(form) });
       setDialogOpen(false);
-      setForm({ title: "", description: "", category: "WiFi" });
+      setForm({ title: "", description: "", category: "WiFi", priority: "Medium", isAnonymous: false });
       loadComplaints();
       toast({ title: "Complaint submitted successfully" });
     } catch (err: unknown) {
@@ -123,7 +135,7 @@ export default function ComplaintsPage() {
           <DialogTrigger asChild>
             <Button size="sm" className="gap-1.5"><Plus className="w-4 h-4" />File Complaint</Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="max-h-[90vh] overflow-y-auto">
             <DialogHeader><DialogTitle>File a Complaint</DialogTitle></DialogHeader>
             <div className="space-y-4">
               <div>
@@ -134,12 +146,30 @@ export default function ComplaintsPage() {
                 </Select>
               </div>
               <div>
+                <Label>Priority</Label>
+                <Select value={form.priority} onValueChange={(v) => setForm((f) => ({ ...f, priority: v }))}>
+                  <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Low">🟢 Low</SelectItem>
+                    <SelectItem value="Medium">🟡 Medium</SelectItem>
+                    <SelectItem value="High">🔴 High</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
                 <Label>Title</Label>
                 <Input className="mt-1" placeholder="Brief title of the issue" value={form.title} onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))} />
               </div>
               <div>
                 <Label>Description</Label>
                 <Textarea className="mt-1" placeholder="Describe the issue in detail..." rows={4} value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} />
+              </div>
+              <div className="flex items-center gap-3 p-3 rounded-lg border border-border bg-muted/30">
+                <Switch id="anon-complaint" checked={form.isAnonymous} onCheckedChange={(v) => setForm((f) => ({ ...f, isAnonymous: v }))} />
+                <div>
+                  <Label htmlFor="anon-complaint" className="cursor-pointer font-medium">Submit Anonymously</Label>
+                  <p className="text-xs text-muted-foreground">Your name will not be shown to admins</p>
+                </div>
               </div>
               <Button className="w-full" onClick={handleCreate} disabled={creating}>
                 {creating ? "Submitting..." : "Submit Complaint"}
@@ -174,13 +204,22 @@ export default function ComplaintsPage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
                         <Badge variant="outline" className="text-xs">{c.category}</Badge>
+                        <span className={`flex items-center gap-1 text-xs px-2 py-0.5 rounded-full font-medium ${priorityColor(c.priority ?? "Medium")}`}>
+                          <ShieldAlert className="w-3 h-3" />{c.priority ?? "Medium"}
+                        </span>
                         <span className={`flex items-center gap-1 text-xs px-2 py-0.5 rounded-full font-medium ${statusColor(c.status)}`}>
                           {statusIcon(c.status)}{c.status}
                         </span>
+                        {c.isAnonymous && (
+                          <span className="text-xs text-muted-foreground italic">Anonymous</span>
+                        )}
                       </div>
                       <p className="font-semibold mt-2">{c.title}</p>
                       <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{c.description}</p>
-                      <p className="text-xs text-muted-foreground mt-2">{formatDistanceToNow(new Date(c.createdAt), { addSuffix: true })}</p>
+                      <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
+                        {!c.isAnonymous && c.authorName && <span>{c.authorName}</span>}
+                        <span>{formatDistanceToNow(new Date(c.createdAt), { addSuffix: true })}</span>
+                      </div>
                     </div>
                     <div className="flex flex-col gap-2">
                       <Button variant="ghost" size="icon" onClick={() => loadDetails(c.id)}>
@@ -229,7 +268,7 @@ export default function ComplaintsPage() {
             </div>
             <div>
               <Label>Note (optional)</Label>
-              <Textarea className="mt-1" placeholder="Add a note..." value={statusUpdate.note} onChange={(e) => setStatusUpdate((u) => ({ ...u, note: e.target.value }))} />
+              <Textarea className="mt-1" placeholder="Add a note for the student..." value={statusUpdate.note} onChange={(e) => setStatusUpdate((u) => ({ ...u, note: e.target.value }))} />
             </div>
             <Button className="w-full" onClick={handleStatusUpdate}>Update Status</Button>
           </div>

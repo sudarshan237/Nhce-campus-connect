@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, text, boolean, timestamp } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
 import { usersTable } from "./users";
@@ -9,6 +9,8 @@ export const complaintsTable = pgTable("complaints", {
   title: text("title").notNull(),
   description: text("description").notNull(),
   category: text("category").notNull(),
+  priority: text("priority").notNull().default("Medium"),
+  isAnonymous: boolean("is_anonymous").notNull().default(false),
   status: text("status").notNull().default("Pending"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow().$onUpdate(() => new Date()),

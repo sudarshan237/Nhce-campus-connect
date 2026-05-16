@@ -25,6 +25,8 @@ router.get("/", requireAuth, async (req, res) => {
         title: complaintsTable.title,
         description: complaintsTable.description,
         category: complaintsTable.category,
+        priority: complaintsTable.priority,
+        isAnonymous: complaintsTable.isAnonymous,
         status: complaintsTable.status,
         createdAt: complaintsTable.createdAt,
         updatedAt: complaintsTable.updatedAt,
@@ -38,7 +40,7 @@ router.get("/", requireAuth, async (req, res) => {
 
     const [{ total }] = await db.select({ total: count() }).from(complaintsTable).where(where);
     res.json({
-      complaints: complaints.map((c) => ({ ...c, authorName: c.authorName ?? null, createdAt: c.createdAt.toISOString(), updatedAt: c.updatedAt.toISOString() })),
+      complaints: complaints.map((c) => ({ ...c, authorName: c.isAnonymous ? null : (c.authorName ?? null), createdAt: c.createdAt.toISOString(), updatedAt: c.updatedAt.toISOString() })),
       total,
     });
   } catch (err) {
@@ -50,10 +52,10 @@ router.get("/", requireAuth, async (req, res) => {
 router.post("/", requireAuth, async (req, res) => {
   try {
     const currentUser = getUser(req)!;
-    const { title, description, category } = req.body;
+    const { title, description, category, priority, isAnonymous } = req.body;
     if (!title || !description || !category) { res.status(400).json({ error: "Title, description, and category required" }); return; }
     const id = nanoid();
-    const [complaint] = await db.insert(complaintsTable).values({ id, authorId: currentUser.userId, title, description, category }).returning();
+    const [complaint] = await db.insert(complaintsTable).values({ id, authorId: currentUser.userId, title, description, category, priority: priority ?? "Medium", isAnonymous: isAnonymous ?? false }).returning();
     await db.insert(complaintUpdatesTable).values({ id: nanoid(), complaintId: id, status: "Pending", note: "Complaint submitted" });
     res.status(201).json({ ...complaint, authorName: null, createdAt: complaint.createdAt.toISOString(), updatedAt: complaint.updatedAt.toISOString() });
   } catch (err) {
@@ -73,6 +75,8 @@ router.get("/:id", requireAuth, async (req, res) => {
         title: complaintsTable.title,
         description: complaintsTable.description,
         category: complaintsTable.category,
+        priority: complaintsTable.priority,
+        isAnonymous: complaintsTable.isAnonymous,
         status: complaintsTable.status,
         createdAt: complaintsTable.createdAt,
         updatedAt: complaintsTable.updatedAt,

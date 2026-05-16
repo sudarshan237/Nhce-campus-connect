@@ -1,0 +1,322 @@
+Improve and extend the existing Campus Connect web app with the following production-grade features and UI/UX improvements.
+
+1. Password Visibility Toggle
+- Add eye icon toggle in:
+  - Login page
+  - Signup/Register page
+  - Reset password/change password page
+- Toggle password hidden/visible
+- Mobile responsive
+- Clean modern UI
+
+2. Campus Feed Improvements
+Allow users to create categorized posts.
+
+Feed Categories:
+
+A) General Announcements
+Examples:
+- Class timing changes
+- Holiday notices
+- Exam schedules
+- Scholarship information
+- Internship opportunities
+- Department circulars
+- Placement updates
+
+B) Study Help
+Examples:
+- Notes sharing
+- Assignment help
+- Coding doubts
+- Lab discussions
+- Previous year papers
+- Study groups
+- Interview prep resources
+- Project collaboration
+
+C) Events
+Examples:
+- Hackathons
+- Workshops
+- Seminars
+- Guest lectures
+- Cultural fests
+- Sports tournaments
+- Club activities
+- Coding contests
+- Startup meetups
+- Alumni sessions
+- Placement drives
+- Webinars
+- NSS/NCC activities
+
+D) Complaints
+Complaint Types:
+- Wi-Fi issues
+- Electrical problems
+- Water supply
+- Sanitation/cleanliness
+- Canteen quality
+- Transport/bus issues
+- Library issues
+- Sports facility problems
+- Hostel maintenance
+- Classroom infrastructure
+- Lab equipment issues
+- Parking problems
+- Security concerns
+- Other
+
+Complaint Features:
+- Complaint status tracking
+- Anonymous complaint option
+- Attach images/screenshots
+- Admin resolution updates
+- Priority level (Low/Medium/High)
+
+E) Lost & Found
+Examples:
+- ID cards
+- Wallets
+- Keys
+- Earbuds
+- Laptops
+- Chargers
+- Books
+- Water bottles
+- Watches
+- Bags
+
+Features:
+- Upload item image
+- Mark item as found/resolved
+- Secure contact option
+
+F) Fun / Social
+Examples:
+- Memes
+- Polls
+- Photography
+- Gaming discussions
+- Movie/music recommendations
+- Confessions
+- Campus stories
+- Talent showcases
+
+G) Other
+Fallback category for uncategorized content.
+
+3. Feedback System Expansion
+
+Add dedicated feedback module.
+
+Feedback Categories:
+- Teacher feedback
+- Department feedback
+- Canteen feedback
+- Hostel feedback
+- Library feedback
+- Transport feedback
+- Sports feedback
+- Facility/infrastructure feedback
+- Placement cell feedback
+- Event feedback
+- Technical support feedback
+- Other
+
+Features:
+- Rating system (1–5 stars)
+- Anonymous option
+- Text feedback
+- Admin moderation
+- Feedback analytics dashboard
+
+4. Placement Module Expansion
+
+Features:
+- Company listings
+- Job/internship postings
+- Application deadlines
+- Placement statistics
+- Salary packages
+- Interview experiences
+- Resume resources
+- Aptitude prep
+- Coding round archives
+- HR questions bank
+- Alumni referrals
+- Placement calendar
+- Mock interview scheduling
+
+Admin Features:
+- Add/edit/delete companies
+- Highlight urgent openings
+- Approve placement posts
+
+5. Admin Panel — Full Control System
+
+Admin Features:
+
+A) User Management
+- View all users
+- Edit user profiles
+- Delete/suspend users
+- Ban abusive users
+- Reset passwords
+- Assign roles
+- Verify users
+
+B) Content Moderation
+- Delete inappropriate posts
+- Edit flagged content
+- Pin announcements
+- Remove spam
+- Moderate comments
+- Review reported posts
+
+C) Complaint Management
+- View all complaints
+- Update complaint status
+- Mark resolved/in-progress
+- Reply publicly/private
+- Export reports
+
+D) Analytics Dashboard
+Show:
+- Active users
+- Daily posts
+- Complaint trends
+- Most active departments
+- Engagement analytics
+- Event participation
+- Placement statistics
+
+E) Security Features
+- Audit logs
+- Admin activity tracking
+- Role-based permissions
+- Secure authentication
+- Session management
+
+6. UI/UX Improvements
+- Modern responsive design
+- Mobile-first layout
+- Dark mode
+- Smooth animations
+- Toast notifications
+- Loading skeletons
+- Clean typography
+- Better spacing/cards
+- Professional dashboard UI
+
+7. Notifications System
+Add real-time notifications for:
+- New announcements
+- Complaint updates
+- Event reminders
+- Placement deadlines
+- Replies/comments
+- Admin notices
+
+Optional:
+- Email notifications
+- Push notifications
+
+8. Search & Filters
+Implement global search.
+
+Search by:
+- Posts
+- Events
+- Complaints
+- Users
+- Companies
+- Lost items
+
+Filters:
+- Date
+- Category
+- Department
+- Popularity
+- Trending
+
+9. Innovation Features
+
+A) AI Campus Assistant
+- FAQ chatbot
+- Academic guidance
+- Placement preparation tips
+
+B) Marketplace
+Students can:
+- Sell books
+- Exchange gadgets
+- Offer services
+- Share rental info
+
+C) Study Rooms
+- Shared whiteboard
+- Group discussions
+- Coding practice
+
+D) Attendance & Timetable Integration
+- Daily timetable
+- Attendance tracking
+- Exam reminders
+
+E) Club & Community System
+- Join clubs
+- Create communities
+- Community announcements
+- Interest-based groups
+
+F) Reputation System
+- Upvotes/downvotes
+- Helpful badges
+- Verified contributors
+- Leaderboards
+
+G) Emergency Alerts
+- Safety alerts
+- Weather alerts
+- Urgent campus notices
+
+H) QR-Based Event Check-In
+- QR attendance
+- Event participation tracking
+
+I) Polls & Voting
+- Student elections
+- Quick surveys
+- Campus opinion polls
+
+10. Technical Requirements
+- Proper database schema
+- Secure authentication
+- Input validation
+- REST API structure
+- Error handling
+- Modular components
+- Optimized performance
+- Pagination
+- Lazy loading
+- Secure admin routes
+
+11. Advanced Engineering Features
+- Real-time chat using WebSockets
+- Role-based authorization
+- Redis caching
+- Activity feeds
+- Docker support
+- CI/CD pipeline
+- Analytics tracking
+- Cloud deployment
+- Rate limiting
+- JWT authentication
+- OAuth login
+- File upload system
+- CDN image optimization
+
+Final Goal:
+Transform the app into a scalable, modern, production-grade campus ecosystem platform focused on communication, collaboration, placements, complaints, engagement, and student life management.
