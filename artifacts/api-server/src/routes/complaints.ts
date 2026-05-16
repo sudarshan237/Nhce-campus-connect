@@ -113,7 +113,7 @@ router.patch("/:id", requireAuth, async (req, res) => {
     if (!updated) { res.status(404).json({ error: "Complaint not found" }); return; }
     await db.insert(complaintUpdatesTable).values({ id: nanoid(), complaintId: req.params.id, status, note: note ?? null });
     // Notify student
-    await db.insert(notificationsTable).values({ id: nanoid(), userId: updated.authorId, title: "Complaint Updated", message: `Your complaint "${updated.title}" status changed to ${status}`, link: `/complaints/${req.params.id}` });
+    await db.insert(notificationsTable).values({ id: nanoid(), userId: updated.authorId, title: "Complaint Updated", message: `Your complaint "${updated.title}" status changed to ${status}`, link: `/complaints` });
     res.json({ ...updated, authorName: null, createdAt: updated.createdAt.toISOString(), updatedAt: updated.updatedAt.toISOString() });
   } catch (err) {
     req.log.error({ err }, "Update complaint error");

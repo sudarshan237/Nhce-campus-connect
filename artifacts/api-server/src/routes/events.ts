@@ -154,7 +154,7 @@ router.post("/:id/register", requireAuth, async (req, res) => {
       registered = true;
       const [event] = await db.select({ title: eventsTable.title }).from(eventsTable).where(eq(eventsTable.id, req.params.id)).limit(1);
       if (event) {
-        await db.insert(notificationsTable).values({ id: nanoid(), userId: currentUser.userId, title: "Event Registration", message: `You registered for "${event.title}"`, link: `/events/${req.params.id}` });
+        await db.insert(notificationsTable).values({ id: nanoid(), userId: currentUser.userId, title: "Event Registration", message: `You registered for "${event.title}"`, link: `/events` });
       }
     }
     const [event] = await db.select({ registrationCount: eventsTable.registrationCount }).from(eventsTable).where(eq(eventsTable.id, req.params.id)).limit(1);

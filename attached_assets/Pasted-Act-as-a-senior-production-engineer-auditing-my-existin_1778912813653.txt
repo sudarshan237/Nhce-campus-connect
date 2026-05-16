@@ -1,0 +1,59 @@
+Act as a senior production engineer auditing my existing live app, NHCE Campus Connect.
+
+GOAL
+- Keep the current app working.
+- Tell me exactly what I need to make it stay online long-term with the lowest possible cost.
+- Do not do a full rewrite.
+- Do not redesign the UI.
+- Do not change features unless required for stability or deployment.
+
+STRICT RULES
+- Make the smallest safe changes only.
+- Do not break the live deployment.
+- Do not remove working features.
+- Do not expose any secrets in the UI or code.
+- Do not hardcode admin credentials anywhere in frontend files.
+- Do not change routes unless a broken route must be fixed.
+- If a change is risky, explain it first before applying it.
+- Prefer migration notes and exact steps over large code rewrites.
+
+WHAT I NEED FROM YOU
+1. Audit the current codebase and tell me exactly:
+   - what stack I am using
+   - what is keeping the app tied to Replit
+   - what is safe to keep
+   - what must be changed for permanent hosting
+
+2. Identify the minimum files that must be edited for a safe long-term deployment.
+
+3. Give me the exact free/low-cost deployment path for this app.
+
+4. Tell me the required:
+   - environment variables
+   - database setup
+   - auth setup
+   - storage setup
+   - build/deploy settings
+
+5. Check for and fix these only if they are present:
+   - admin credentials shown in UI
+   - broken comments in feed
+   - notification links going to 404
+   - branch and course fields overwriting each other
+   - expired events/placements still acting active
+
+6. If the app can stay on Replit only temporarily, tell me clearly how long and what happens after expiry.
+
+7. Give me a final checklist titled:
+   - What I must do now
+   - What I must do later
+   - What I must not do
+
+IMPORTANT OUTPUT FORMAT
+- Start with a short audit summary.
+- Then list the exact files to change.
+- Then list the exact deployment steps.
+- Then list the exact risks.
+- Then give the final safe action plan.
+
+Do not summarize vaguely. Be specific. If something is missing, say so plainly.
