@@ -21,6 +21,23 @@ const CATEGORIES = [
   "Library","Sports","Hostel","Classroom","Lab Equipment","Parking","Security","Other"
 ];
 const PRIORITIES = ["Low","Medium","High"];
+
+const CATEGORY_DESC_EXAMPLES: Record<string, string> = {
+  "WiFi": "e.g. WiFi in Block B is completely down since Monday. Password reset didn't help. Affects about 40 students.",
+  "Electrical": "e.g. Power socket near row 3 of Lab 204 is sparking. Reported to caretaker but no fix yet.",
+  "Water": "e.g. No water supply in boys hostel Block A since 6 AM. Taps completely dry on floors 2 and 3.",
+  "Sanitation": "e.g. Washrooms near canteen haven't been cleaned in 2 days. Strong odour and water logging.",
+  "Canteen": "e.g. Food quality has dropped significantly — rice is undercooked and dal has a stale smell.",
+  "Transport": "e.g. Bus route 3 (Marathahalli) didn't show up today. No notice given. 30+ students stranded.",
+  "Library": "e.g. 5 computers in the digital library are broken for over a week. Important exam season.",
+  "Sports": "e.g. Cricket pitch is waterlogged and nets are torn. Ground staff haven't addressed it.",
+  "Hostel": "e.g. Ceiling fan in Room 214, Block C is making a grinding noise and vibrating dangerously.",
+  "Classroom": "e.g. Projector in Room 301 has been broken for 10 days. Faculty can't show slides during lectures.",
+  "Lab Equipment": "e.g. 3 oscilloscopes in ECE Lab 2 are non-functional. Affects practical sessions.",
+  "Parking": "e.g. Unauthorized vehicles blocking student two-wheeler parking near Block D gate daily.",
+  "Security": "e.g. Side gate near library is left unmanned after 6 PM. Outsiders have been seen entering.",
+  "Other": "Describe the issue clearly including location, when it started, and what you've already tried.",
+};
 const STATUSES = ["Pending","In Progress","Resolved"];
 
 interface ComplaintUpdate {
@@ -162,7 +179,7 @@ export default function ComplaintsPage() {
               </div>
               <div>
                 <Label>Description</Label>
-                <Textarea className="mt-1" placeholder="Describe the issue in detail..." rows={4} value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} />
+                <Textarea className="mt-1" placeholder={CATEGORY_DESC_EXAMPLES[form.category] ?? "Describe the issue in detail..."} rows={4} value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} />
               </div>
               <div className="flex items-center gap-3 p-3 rounded-lg border border-border bg-muted/30">
                 <Switch id="anon-complaint" checked={form.isAnonymous} onCheckedChange={(v) => setForm((f) => ({ ...f, isAnonymous: v }))} />

@@ -9,16 +9,22 @@ const router = Router();
 router.get("/", requireAuth, async (req, res) => {
   try {
     const currentUser = getUser(req)!;
-    const { search, page = "1", limit = "20" } = req.query as Record<string, string>;
+    const { search, saved, applied, page = "1", limit = "20" } = req.query as Record<string, string>;
     const offset = (Number(page) - 1) * Number(limit);
-    const where = search ? ilike(placementsTable.company, `%${search}%`) : undefined;
-
-    const placements = await db.select().from(placementsTable).where(where).orderBy(desc(placementsTable.createdAt)).offset(offset).limit(Number(limit));
 
     const apps = await db.select({ placementId: placementApplicationsTable.placementId }).from(placementApplicationsTable).where(eq(placementApplicationsTable.userId, currentUser.userId));
     const saves = await db.select({ placementId: placementSavesTable.placementId }).from(placementSavesTable).where(eq(placementSavesTable.userId, currentUser.userId));
     const appSet = new Set(apps.map((a) => a.placementId));
     const saveSet = new Set(saves.map((s) => s.placementId));
+
+    const conditions = [];
+    if (search) conditions.push(ilike(placementsTable.company, `%${search}%`));
+    if (saved === "true" && saveSet.size > 0) conditions.push(sql`${placementsTable.id} = ANY(${Array.from(saveSet)})`);
+    if (applied === "true" && appSet.size > 0) conditions.push(sql`${placementsTable.id} = ANY(${Array.from(appSet)})`);
+    const where = conditions.length > 0 ? and(...conditions) : undefined;
+
+    let placements = await db.select().from(placementsTable).where(where).orderBy(desc(placementsTable.createdAt)).offset(offset).limit(Number(limit));
+    if ((saved === "true" && saveSet.size === 0) || (applied === "true" && appSet.size === 0)) placements = [];
 
     const [{ total }] = await db.select({ total: count() }).from(placementsTable).where(where);
     res.json({

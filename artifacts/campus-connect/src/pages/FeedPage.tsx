@@ -20,6 +20,17 @@ import { useToast } from "@/hooks/use-toast";
 
 const CATEGORIES = ["General","Announcements","Study Help","Events","Complaints","Lost & Found","Fun","Other"];
 
+const CATEGORY_EXAMPLES: Record<string, string> = {
+  "General": "e.g. Important update for all students...",
+  "Announcements": "e.g. Class timings changed for tomorrow — 9 AM slot shifted to 11 AM. Please check with your CR.",
+  "Study Help": "e.g. Anyone have notes for DSA Unit 4? Struggling with graphs — happy to share mine for the other units.",
+  "Events": "e.g. Hackathon this weekend at Block C! Open to all branches. Teams of 2–4. Register by Friday.",
+  "Complaints": "e.g. WiFi in Block B hostel has been down for 3 days. Raised a ticket but no response yet.",
+  "Lost & Found": "e.g. Found a blue water bottle near the canteen. Has initials 'RK' on it. DM to claim.",
+  "Fun": "e.g. Anyone else think the sambar today was suspiciously good? Best meal in months 😂",
+  "Other": "e.g. Anything that doesn't fit the other categories — share away!",
+};
+
 interface Post {
   id: string; authorId: string; authorName: string | null; content: string;
   category: string; likeCount: number; commentCount: number; isPinned: boolean;
@@ -256,7 +267,7 @@ export default function FeedPage() {
                   <Label>Content</Label>
                   <Textarea
                     className="mt-1"
-                    placeholder="What's on your mind?"
+                    placeholder={CATEGORY_EXAMPLES[newPost.category] ?? "What's on your mind?"}
                     rows={4}
                     value={newPost.content}
                     onChange={(e) => setNewPost((p) => ({ ...p, content: e.target.value }))}

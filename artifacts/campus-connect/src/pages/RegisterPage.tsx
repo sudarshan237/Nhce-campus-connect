@@ -6,10 +6,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { GraduationCap, AlertCircle, Eye, EyeOff } from "lucide-react";
+import { GraduationCap, AlertCircle, Eye, EyeOff, Info } from "lucide-react";
 
 const BRANCHES = ["CSE","AIML","DS","ECE","EEE","ME","Civil","ISE"];
-const COURSES = ["BTech","BE","MCA","MBA","BCA","MTech","PhD"];
+const COURSES = ["BE","MCA","MBA","BCA","MTech"];
+const ROLES = ["Student","Faculty","Staff"];
 
 export default function RegisterPage() {
   const { register } = useAuth();
@@ -45,6 +46,20 @@ export default function RegisterPage() {
           <h1 className="text-2xl font-bold">Create Account</h1>
           <p className="text-muted-foreground mt-1">NHCE Campus Connect</p>
         </div>
+
+        <div className="mb-4 p-3 rounded-lg bg-primary/5 border border-primary/20 flex items-start gap-2 text-sm">
+          <Info className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
+          <div>
+            <p className="font-medium text-primary">New here? Register first, then sign in.</p>
+            <p className="text-muted-foreground text-xs mt-0.5">Use your official college email address.</p>
+          </div>
+        </div>
+
+        <div className="mb-4 p-3 rounded-lg bg-destructive/5 border border-destructive/20 flex items-start gap-2 text-sm">
+          <AlertCircle className="w-4 h-4 text-destructive flex-shrink-0 mt-0.5" />
+          <p className="text-destructive text-xs">Multiple accounts are not allowed and will be permanently deleted by the admin.</p>
+        </div>
+
         <Card>
           <CardHeader className="pb-4">
             <CardTitle>Register</CardTitle>
@@ -64,7 +79,7 @@ export default function RegisterPage() {
                   <Input placeholder="Rahul Sharma" value={form.name} onChange={(e) => set("name", e.target.value)} required />
                 </div>
                 <div className="col-span-2 space-y-1">
-                  <Label>Email *</Label>
+                  <Label>College Email *</Label>
                   <Input type="email" placeholder="1nh22cs001@nhce.edu" value={form.email} onChange={(e) => set("email", e.target.value)} required />
                 </div>
                 <div className="col-span-2 space-y-1">
@@ -76,37 +91,61 @@ export default function RegisterPage() {
                     </button>
                   </div>
                 </div>
-                <div className="space-y-1">
-                  <Label>USN</Label>
-                  <Input placeholder="1NH22CS001" value={form.usn} onChange={(e) => set("usn", e.target.value)} />
-                </div>
-                <div className="space-y-1">
-                  <Label>Year</Label>
-                  <Select onValueChange={(v) => set("year", v)}>
-                    <SelectTrigger><SelectValue placeholder="Year" /></SelectTrigger>
+                <div className="col-span-2 space-y-1">
+                  <Label>Role *</Label>
+                  <Select value={form.role} onValueChange={(v) => set("role", v)}>
+                    <SelectTrigger><SelectValue placeholder="I am a..." /></SelectTrigger>
                     <SelectContent>
-                      {[1,2,3,4].map((y) => <SelectItem key={y} value={String(y)}>{y} Year</SelectItem>)}
+                      {ROLES.map((r) => <SelectItem key={r} value={r}>{r}</SelectItem>)}
                     </SelectContent>
                   </Select>
                 </div>
-                <div className="space-y-1">
-                  <Label>Branch</Label>
-                  <Select onValueChange={(v) => set("branch", v)}>
-                    <SelectTrigger><SelectValue placeholder="Branch" /></SelectTrigger>
-                    <SelectContent>
-                      {BRANCHES.map((b) => <SelectItem key={b} value={b}>{b}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-1">
-                  <Label>Course</Label>
-                  <Select onValueChange={(v) => set("course", v)}>
-                    <SelectTrigger><SelectValue placeholder="Course" /></SelectTrigger>
-                    <SelectContent>
-                      {COURSES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
+                {form.role === "Student" && (
+                  <>
+                    <div className="space-y-1">
+                      <Label>USN</Label>
+                      <Input placeholder="1NH22CS001" value={form.usn} onChange={(e) => set("usn", e.target.value)} />
+                    </div>
+                    <div className="space-y-1">
+                      <Label>Year</Label>
+                      <Select onValueChange={(v) => set("year", v)}>
+                        <SelectTrigger><SelectValue placeholder="Year" /></SelectTrigger>
+                        <SelectContent>
+                          {[1,2,3,4].map((y) => <SelectItem key={y} value={String(y)}>{y} Year</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-1">
+                      <Label>Branch</Label>
+                      <Select onValueChange={(v) => set("branch", v)}>
+                        <SelectTrigger><SelectValue placeholder="Branch" /></SelectTrigger>
+                        <SelectContent>
+                          {BRANCHES.map((b) => <SelectItem key={b} value={b}>{b}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-1">
+                      <Label>Course</Label>
+                      <Select onValueChange={(v) => set("course", v)}>
+                        <SelectTrigger><SelectValue placeholder="Course" /></SelectTrigger>
+                        <SelectContent>
+                          {COURSES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </>
+                )}
+                {(form.role === "Faculty" || form.role === "Staff") && (
+                  <div className="col-span-2 space-y-1">
+                    <Label>Department</Label>
+                    <Select onValueChange={(v) => set("branch", v)}>
+                      <SelectTrigger><SelectValue placeholder="Department" /></SelectTrigger>
+                      <SelectContent>
+                        {BRANCHES.map((b) => <SelectItem key={b} value={b}>{b}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
               </div>
               <Button type="submit" className="w-full mt-2" disabled={loading}>
                 {loading ? "Creating account..." : "Create Account"}

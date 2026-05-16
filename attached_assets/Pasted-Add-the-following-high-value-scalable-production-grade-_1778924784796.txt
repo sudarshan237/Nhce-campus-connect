@@ -1,0 +1,290 @@
+Add the following high-value, scalable, production-grade improvements to the Campus Connect web app.
+
+FOCUS:
+Do not add random feature bloat.
+Focus on scalability, usability, moderation, performance, and real-world system design similar to modern platforms like Reddit, Discord, LinkedIn, GitHub, and Notion.
+
+1. Universal Tagging System (Very Important)
+
+Implement a scalable tagging system across all posts/modules.
+
+Example Tags:
+- #CSE
+- #ECE
+- #ISE
+- #MECH
+- #HostelA
+- #Placement
+- #Urgent
+- #Exam
+- #Hackathon
+- #Internship
+- #Notes
+- #WiFi
+- #Library
+- #Sports
+- #LostAndFound
+
+Requirements:
+- Users can add tags while posting
+- Auto-suggestions while typing tags
+- Trending tags section
+- Search posts by tags
+- Filter feeds using tags
+- Multiple tags per post
+- Tag analytics for admin
+
+Goal:
+Tags should reduce category clutter and make the system scalable like Reddit/GitHub hashtags.
+
+2. Real-System Feed Features
+
+Implement modern social feed features inspired by production apps.
+
+Features:
+- Infinite scrolling
+- Lazy loading
+- Trending posts
+- Pinned announcements
+- Save/bookmark posts
+- Upvote/downvote system
+- Comment system
+- Nested replies
+- Share post functionality
+- Post edit/delete
+- Anonymous posting option
+- Media uploads (images/files/PDFs)
+- Poll posts
+- Report abuse/spam feature
+- Post engagement analytics
+- Real-time feed refresh
+
+3. User Profile System
+
+Add advanced user profiles.
+
+Features:
+- Profile photo
+- Bio/about section
+- Department/year info
+- Skills/interests
+- Achievement badges
+- Reputation points
+- Activity history
+- Saved posts
+- Contributions count
+- Social links
+- Resume/profile link
+
+4. Reputation & Trust System
+
+Inspired by Reddit/StackOverflow/GitHub.
+
+Features:
+- Upvotes increase reputation
+- Helpful badges
+- Verified contributors
+- Top contributors leaderboard
+- Campus ambassadors/moderator roles
+- Anti-spam trust scoring
+- Report handling system
+
+5. Department & Community System
+
+Allow department-wise and interest-wise communities.
+
+Examples:
+- CSE Community
+- Placement Prep
+- Hackathon Club
+- Hostel Discussions
+- Startup Community
+- Open Source Club
+
+Features:
+- Join/leave communities
+- Community admins/moderators
+- Community-specific feeds
+- Community announcements
+- Private/public communities
+
+6. Advanced Admin System
+
+Make admin panel powerful and production-grade.
+
+Admin Features:
+- User banning/suspension
+- Role-based permissions
+- Moderator roles
+- Content moderation queue
+- Spam detection
+- Abuse reports dashboard
+- Edit/delete any content
+- Pin/unpin announcements
+- Analytics dashboard
+- User activity tracking
+- Complaint resolution workflow
+- Department-wise analytics
+- Tag analytics
+- Feed engagement analytics
+
+7. Smart Notification System
+
+Add real-time notifications.
+
+Notifications:
+- New comments
+- Replies
+- Upvotes
+- Complaint status updates
+- Placement alerts
+- Event reminders
+- Community announcements
+- Admin notices
+
+Optional:
+- Push notifications
+- Email notifications
+
+8. Advanced Search & Discovery
+
+Implement powerful search.
+
+Search Across:
+- Posts
+- Users
+- Communities
+- Events
+- Tags
+- Companies
+- Complaints
+
+Filters:
+- Trending
+- Most liked
+- Most recent
+- Department
+- Category
+- Tag
+- Date range
+
+9. Placement Ecosystem Features
+
+Make placements a core platform feature.
+
+Features:
+- Placement preparation hub
+- Company-specific discussion threads
+- Interview experiences
+- Resume review system
+- Coding prep resources
+- Aptitude prep
+- Referral requests
+- Placement timeline tracking
+- Job/internship bookmarking
+- Placement leaderboard
+- Alumni mentorship system
+
+10. High-Value Real-World Features
+
+A) Real-Time Chat
+- Direct messaging
+- Group chats
+- Community chats
+- WebSocket-based messaging
+
+B) Marketplace
+- Buy/sell books
+- Gadget exchange
+- Hostel essentials marketplace
+
+C) Study Collaboration
+- Shared study rooms
+- Group discussions
+- Shared notes
+- Coding collaboration
+
+D) Event Management
+- QR event check-in
+- Event registration
+- Attendance tracking
+- Certificates download
+
+11. Security & Scalability Features
+
+Implement proper engineering practices.
+
+Security:
+- JWT authentication
+- OAuth login
+- Email verification
+- Password hashing
+- Rate limiting
+- Input validation
+- XSS/SQL injection protection
+- Role-based access control
+
+Scalability:
+- Pagination
+- Lazy loading
+- Optimized database indexing
+- Caching
+- Modular backend architecture
+- REST API standards
+- Error handling
+- Logging system
+
+12. Performance & UX
+
+Improve overall app quality.
+
+Features:
+- Dark mode
+- Mobile-first design
+- Responsive UI
+- Smooth animations
+- Skeleton loading
+- Fast page loads
+- Optimized images
+- Toast notifications
+- Clean modern dashboard
+
+13. Analytics & Insights
+
+Provide insights for admins.
+
+Analytics:
+- Active users
+- Daily engagement
+- Trending tags
+- Popular communities
+- Complaint statistics
+- Placement stats
+- Event participation
+- User growth metrics
+
+14. Resume-Level Engineering Features
+
+Implement features that make this project globally competitive and strong for internships/jobs.
+
+Add:
+- Docker support
+- CI/CD pipeline
+- Cloud deployment support
+- Redis caching
+- WebSocket integration
+- Activity logging
+- API documentation
+- Modular architecture
+- Environment variable management
+- Production-ready folder structure
+
+FINAL GOAL:
+Transform the project into a scalable campus ecosystem platform that combines:
+- Reddit-style discussions
+- Discord-style communities
+- LinkedIn-style placements/networking
+- GitHub-style reputation systems
+- Notion-style organization
+
+The app should feel modern, scalable, professional, secure, and production-ready rather than a basic student CRUD project.
